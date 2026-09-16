@@ -8,6 +8,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_executable(Desafio1 main.cpp
     Funciones.h
     Funciones.cpp
+    random.cpp
+    random.h
 )
 
 include(GNUInstallDirs)
