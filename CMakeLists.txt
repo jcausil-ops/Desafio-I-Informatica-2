@@ -6,10 +6,12 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(Desafio1 main.cpp
-    Funciones.h
-    Funciones.cpp
+    Funciones_bit.h
+    Funciones_bit.cpp
     random.cpp
     random.h
+    Func_Tablero.h
+    Func_Tablero.cpp
 )
 
 include(GNUInstallDirs)
