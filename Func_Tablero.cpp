@@ -68,3 +68,141 @@ void Imp_tablero_binario(const unsigned char *memoria, int Capacid_bytes, int fi
             cout << '\n';
     }
 }
+
+void gravedad_relleno(unsigned char *memoria, int Capacid_bytes, int filas, int columnas)
+{
+    for (int c = 0; c < columnas; ++c) {
+        int fila_destino = filas - 1;
+        for (int fila_origen = filas - 1; fila_origen >= 0; --fila_origen) {
+            int pos_origen = fila_origen * columnas + c;
+            unsigned char valor = Obtener_ficha(memoria, Capacid_bytes, pos_origen);
+            if (valor != Libre) {
+                int pos_destino = fila_destino * columnas + c;
+                if (pos_destino != pos_origen) {
+                    asignar_ficha(memoria, Capacid_bytes, pos_destino, valor);
+                    asignar_ficha(memoria, Capacid_bytes, pos_origen, Libre);
+                }
+                --fila_destino;
+            }
+        }
+        while (fila_destino >= 0) {
+            int pos_destino = fila_destino * columnas + c;
+            asignar_ficha(memoria, Capacid_bytes, pos_destino, randomFicha());
+            --fila_destino;
+        }
+    }
+    limpiar_no_use(memoria, Capacid_bytes, filas, columnas);
+}
+
+bool Agregar_fila(unsigned char *&memoria, int &Capacid_bytes, int &filas, int columnas, int posicion)
+{
+    if (posicion < 0 || posicion > filas)
+        return false;
+
+    int nuevas_filas = filas + 1;
+    int bytes_requeridos = Bytes_nec(nuevas_filas, columnas);
+    int nueva_capacidad = bytes_requeridos > Capacid_bytes ? bytes_requeridos : Capacid_bytes;
+
+    unsigned char *nueva_memoria = Pack_memoria(nueva_capacidad);
+
+    for (int f_nueva = 0; f_nueva < nuevas_filas; ++f_nueva) {
+        for (int c = 0; c < columnas; ++c) {
+            unsigned char valor = randomFicha();
+            if (f_nueva != posicion) {
+                int f_vieja = f_nueva < posicion ? f_nueva : f_nueva - 1;
+                valor = Obtener_ficha(memoria, Capacid_bytes, f_vieja * columnas + c);
+            }
+            asignar_ficha(nueva_memoria, nueva_capacidad, f_nueva * columnas + c, valor);
+        }
+    }
+
+    limpiar_no_use(nueva_memoria, nueva_capacidad, nuevas_filas, columnas);
+    Nuevo_tablero(memoria, Capacid_bytes, nueva_memoria, nueva_capacidad);
+    filas = nuevas_filas;
+    return true;
+}
+
+bool Eliminar_fila(unsigned char *&memoria, int &Capacid_bytes, int &filas, int columnas, int posicion)
+{
+    if (posicion < 0 || posicion >= filas || filas == 1)
+        return false;
+
+    int nuevas_filas = filas - 1;
+    int bytes_requeridos = Bytes_nec(nuevas_filas, columnas);
+    int nueva_capacidad = (bytes_requeridos * 100 < Capacid_bytes * 65) ? bytes_requeridos : Capacid_bytes;
+
+    unsigned char *nueva_memoria = Pack_memoria(nueva_capacidad);
+    int f_nueva = 0;
+
+    for (int f_vieja = 0; f_vieja < filas; ++f_vieja) {
+        if (f_vieja == posicion)
+            continue;
+
+        for (int c = 0; c < columnas; ++c) {
+            unsigned char valor = Obtener_ficha(memoria, Capacid_bytes, f_vieja * columnas + c);
+            asignar_ficha(nueva_memoria, nueva_capacidad, f_nueva * columnas + c, valor);
+        }
+        ++f_nueva;
+    }
+    limpiar_no_use(nueva_memoria, nueva_capacidad, nuevas_filas, columnas);
+    Nuevo_tablero(memoria, Capacid_bytes, nueva_memoria, nueva_capacidad);
+    filas = nuevas_filas;
+    return true;
+}
+
+bool Agregar_columna(unsigned char *&memoria, int &Capacid_bytes, int filas, int &columnas, int posicion)
+{
+    if (posicion < 0 || posicion > columnas)
+        return false;
+
+    int nuevas_columnas = columnas + 1;
+    int bytes_requeridos = Bytes_nec(filas, nuevas_columnas);
+    int nueva_capacidad = bytes_requeridos > Capacid_bytes ? bytes_requeridos : Capacid_bytes;
+
+    unsigned char *nueva_memoria = Pack_memoria(nueva_capacidad);
+
+    for (int f = 0; f < filas; ++f) {
+        for (int c_nueva = 0; c_nueva < nuevas_columnas; ++c_nueva) {
+            unsigned char valor = randomFicha();
+            if (c_nueva != posicion) {
+                int c_vieja = c_nueva < posicion ? c_nueva : c_nueva - 1;
+                valor = Obtener_ficha(memoria, Capacid_bytes, f * columnas + c_vieja);
+            }
+            asignar_ficha(nueva_memoria, nueva_capacidad, f * nuevas_columnas + c_nueva, valor);
+        }
+    }
+
+    limpiar_no_use(nueva_memoria, nueva_capacidad, filas, nuevas_columnas);
+    Nuevo_tablero(memoria, Capacid_bytes, nueva_memoria, nueva_capacidad);
+    columnas = nuevas_columnas;
+    return true;
+}
+
+bool Eliminar_columna(unsigned char *&memoria, int &Capacid_bytes, int filas, int &columnas, int posicion)
+{
+    if (posicion < 0 || posicion >= columnas || columnas == 1)
+        return false;
+
+    int nuevas_columnas = columnas - 1;
+    int bytes_requeridos = Bytes_nec(filas, nuevas_columnas);
+    int nueva_capacidad = (bytes_requeridos * 100 < Capacid_bytes * 65) ? bytes_requeridos : Capacid_bytes;
+
+    unsigned char *nueva_memoria = Pack_memoria(nueva_capacidad);
+
+    for (int f = 0; f < filas; ++f) {
+        int c_nueva = 0;
+        for (int c_vieja = 0; c_vieja < columnas; ++c_vieja) {
+            if (c_vieja == posicion)
+                continue;
+
+            unsigned char valor = Obtener_ficha(memoria, Capacid_bytes, f * columnas + c_vieja);
+            asignar_ficha(nueva_memoria, nueva_capacidad, f * nuevas_columnas + c_nueva, valor);
+            ++c_nueva;
+        }
+    }
+
+    limpiar_no_use(nueva_memoria, nueva_capacidad, filas, nuevas_columnas);
+    Nuevo_tablero(memoria, Capacid_bytes, nueva_memoria, nueva_capacidad);
+    columnas = nuevas_columnas;
+    return true;
+}
