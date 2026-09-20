@@ -12,6 +12,8 @@ add_executable(Desafio1 main.cpp
     random.h
     Func_Tablero.h
     Func_Tablero.cpp
+    Logica_juego.h
+    Logica_juego.cpp
 )
 
 include(GNUInstallDirs)
