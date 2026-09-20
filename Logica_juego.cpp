@@ -10,8 +10,10 @@ static int Bytes_marcado_nec(int posiciones)
     return (posiciones + 7) / 8;
 }
 
-static void Marcar_posicion(unsigned char *marcas, int posicion)
+static void Marcar_posicion(unsigned char *marcas, int posicion, int bytes_marcas)
 {
+    if (!marcas || posicion < 0 || (posicion / 8) >= bytes_marcas)
+        return;
 
     marcas[posicion / 8] |= static_cast<unsigned char>(1 << (posicion % 8));
 }
@@ -22,17 +24,17 @@ static bool Esta_marcado(const unsigned char *marcas, int posicion)
 }
 
 static void Marcar_secuencia_horizontal(unsigned char *marcas, int fila, int columnas,
-                                        int col_inicio, int longitud)
+                                        int col_inicio, int longitud,int bytes_marcas)
 {
     for (int col = col_inicio; col < col_inicio + longitud; ++col)
-        Marcar_posicion(marcas, fila * columnas + col);
+        Marcar_posicion(marcas, fila * columnas + col, bytes_marcas);
 }
 
 static void Marcar_secuencia_vertical(unsigned char *marcas, int col, int columnas,
-                                      int fila_inicio, int longitud)
+                                      int fila_inicio, int longitud,int bytes_marcas)
 {
     for (int fila = fila_inicio; fila < fila_inicio + longitud; ++fila)
-        Marcar_posicion(marcas, fila * columnas + col);
+        Marcar_posicion(marcas, fila * columnas + col,bytes_marcas);
 }
 
 
@@ -61,13 +63,12 @@ bool Buscar_coincidencias(const unsigned char *memoria, int Capacid_bytes, int f
             int longitud = fin - inicio;
             if (valor < Libre && longitud >= 3)
             {
-                Marcar_secuencia_horizontal(marcas, f, columnas, inicio, longitud);
+                Marcar_secuencia_horizontal(marcas, f, columnas, inicio, longitud, bytes_marcas);
                 ++horizontales;
             }
             inicio = fin;
         }
     }
-
 
     for (int c = 0; c < columnas; ++c)
     {
@@ -82,7 +83,7 @@ bool Buscar_coincidencias(const unsigned char *memoria, int Capacid_bytes, int f
             int longitud = fin - inicio;
             if (valor < Libre && longitud >= 3)
             {
-                Marcar_secuencia_vertical(marcas, c, columnas, inicio, longitud);
+                Marcar_secuencia_vertical(marcas, c, columnas, inicio, longitud,bytes_marcas);
                 ++verticales;
             }
             inicio = fin;

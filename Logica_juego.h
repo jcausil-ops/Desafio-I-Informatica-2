@@ -1,7 +1,7 @@
 #ifndef LOGICA_JUEGO_H
 #define LOGICA_JUEGO_H
 static int Bytes_marcado_nec(int posiciones);
-static void Marcar_posicion(unsigned char *marcas, int posicion);
+void Marcar_posicion(unsigned char *marcas, int posicion);
 static bool Esta_marcado(const unsigned char *marcas, int posicion);
 static void Marcar_secuencia_horizontal(unsigned char *marcas, int fila, int columnas,int col_inicio, int longitud);
 static void Marcar_secuencia_vertical(unsigned char *marcas, int col, int columnas,int fila_inicio, int longitud);
