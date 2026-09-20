@@ -1,8 +1,8 @@
 #include "Funciones_bit.h"
 
-int Bytes_nec(int rows, int columns)
+int Bytes_nec(int fila, int columna)
 {
-    int totalBits = rows * columns * 3 ;
+    int totalBits = fila * columna * 3 ;
     return (totalBits + 7) / 8;
 }
 
@@ -10,7 +10,7 @@ unsigned char *Pack_memoria(int bytes_rser)
 {
     unsigned char *memory = new unsigned char[bytes_rser];
     for (int index = 0; index < bytes_rser; ++index)
-        memory[index] = 0u;
+        memory[index] = 0;
     return memory;
 }
 
@@ -90,7 +90,7 @@ void limpiar_no_use(unsigned char *memoria, int bytes_reservados, int filas, int
 
 
     if (bytes_activos > 0 && bits_validos_ultimo_byte != 0) {
-        unsigned int mascara_valida = (1u<< bits_validos_ultimo_byte) - 1;
+        unsigned int mascara_valida = (1 << bits_validos_ultimo_byte) - 1;
         memoria[bytes_activos - 1] &= static_cast<unsigned char>(mascara_valida);
     }
 
