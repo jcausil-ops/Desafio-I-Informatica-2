@@ -13,12 +13,12 @@ static int Bytes_marcado_nec(int posiciones)
 static void Marcar_posicion(unsigned char *marcas, int posicion)
 {
 
-    marcas[posicion / 8] |= static_cast<unsigned char>(1u << (posicion % 8));
+    marcas[posicion / 8] |= static_cast<unsigned char>(1 << (posicion % 8));
 }
 
 static bool Esta_marcado(const unsigned char *marcas, int posicion)
 {
-    return ((marcas[posicion / 8] >> (posicion % 8)) & 1u) != 0u;
+    return ((marcas[posicion / 8] >> (posicion % 8)) & 1) != 0;
 }
 
 static void Marcar_secuencia_horizontal(unsigned char *marcas, int fila, int columnas,
@@ -42,7 +42,7 @@ bool Buscar_coincidencias(const unsigned char *memoria, int Capacid_bytes, int f
     int posiciones = filas * columnas;
     int bytes_marcas = Bytes_marcado_nec(posiciones);
     for (int i = 0; i < bytes_marcas; ++i)
-        marcas[i] = 0u;
+        marcas[i] = 0;
 
     horizontales = 0;
     verticales = 0;
@@ -131,13 +131,23 @@ int Resolver_cascadas(unsigned char *memoria, int Capacid_bytes, int filas, int 
         comb_horizontales += horiz;
         comb_verticales += vert;
 
-        puntuacion += static_cast<long long>(eliminadas) * 20LL * cascadas;
+        puntuacion += static_cast<long long>(eliminadas) * 20 * cascadas;
 
         gravedad_relleno(memoria, Capacid_bytes, filas, columnas);
     }
 
     delete[] marcas;
     return cascadas;
+}
+
+void tablero_limpio(unsigned char *memoria, int Capacid_bytes, int filas, int columnas)
+{
+    Llenar_tablero(memoria, Capacid_bytes, filas, columnas);
+
+    int elim = 0, comb = 0, horiz = 0, vert = 0;
+    long long pts = 0;
+
+    Resolver_cascadas(memoria, Capacid_bytes, filas, columnas, elim, comb, horiz, vert, pts);
 }
 
 bool Eliminar_ficha_jugador(unsigned char *memoria, int Capacid_bytes, int filas, int columnas,

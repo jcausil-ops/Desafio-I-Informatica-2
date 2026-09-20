@@ -11,6 +11,7 @@ int Resolver_cascadas(unsigned char *memoria, int Capacid_bytes, int filas, int 
                       int &total_eliminadas, int &total_combinaciones,
                       int &comb_horizontales, int &comb_verticales,
                       long long &puntuacion);
+void tablero_limpio(unsigned char *memoria, int Capacid_bytes, int filas, int columnas);
 bool Eliminar_ficha_jugador(unsigned char *memoria, int Capacid_bytes, int filas, int columnas,
                             int fila, int columna, int &remociones_usuario, int &total_eliminadas,
                             int &total_combinaciones, int &comb_horizontales,
