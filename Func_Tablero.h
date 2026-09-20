@@ -1,6 +1,8 @@
 #ifndef FUNC_TABLERO_H
 #define FUNC_TABLERO_H
 
+int Leer_entero(const char mensaje[]);
+void Mostrar_menu();
 static const char* simbol_ficha(unsigned char ficha);
 static void Nuevo_tablero(unsigned char *&memoria, int &Capacid_bytes,unsigned char *nueva_memoria, int nueva_capacidad);
 unsigned char *Crear_tablero(int filas, int columnas, int &Capacid_bytes);

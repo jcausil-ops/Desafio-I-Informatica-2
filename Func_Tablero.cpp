@@ -1,7 +1,34 @@
 #include <iostream>
 #include "Funciones_bit.h"
+#include "Func_Tablero.h"
 #include "random.h"
+
 using namespace std;
+
+int Leer_entero(const char mensaje[])
+{
+    int valor = 0;
+    while (true)
+    {
+        cout << mensaje;
+        if (cin >> valor)
+            return valor;
+        cin.clear();
+        cin.ignore(10000, '\n');
+        cout << "Entrada invalida. Intente nuevamente.\n";
+    }
+}
+
+void Mostrar_menu()
+{
+    cout << "\n1. Mostrar tablero\n";
+    cout << "2. Eliminar ficha\n";
+    cout << "3. Agregar fila\n";
+    cout << "4. Eliminar fila\n";
+    cout << "5. Agregar columna\n";
+    cout << "6. Eliminar columna\n";
+    cout << "0. Salir\n";
+}
 
 static const char* simbol_ficha(unsigned char ficha)
 {
@@ -59,6 +86,9 @@ void Imprim_tablero(const unsigned char *memoria, int Capacid_bytes, int filas, 
 
 void Imp_tablero_binario(const unsigned char *memoria, int Capacid_bytes, int filas, int columnas)
 {
+    if (!memoria || Capacid_bytes <= 0)
+        return;
+
     int posiciones = filas * columnas;
     cout << "\nTrama logica de fichas, tres bits por posicion\n";
     for (int idx = 0; idx < posiciones; ++idx) {
@@ -67,6 +97,15 @@ void Imp_tablero_binario(const unsigned char *memoria, int Capacid_bytes, int fi
         if ((idx + 1) % columnas == 0)
             cout << '\n';
     }
+
+    cout << "Bytes fisicos, mayor indice primero; los bits no validos quedan a la izquierda\n";
+    for (int byteIndex = Capacid_bytes - 1; byteIndex >= 0; --byteIndex) {
+        for (int bit = 7; bit >= 0; --bit) {
+            cout << ((memoria[byteIndex] >> bit) & 1u);
+        }
+        cout << ' ';
+    }
+    cout << '\n';
 }
 
 void gravedad_relleno(unsigned char *memoria, int Capacid_bytes, int filas, int columnas)
@@ -206,3 +245,4 @@ bool Eliminar_columna(unsigned char *&memoria, int &Capacid_bytes, int filas, in
     columnas = nuevas_columnas;
     return true;
 }
+
